@@ -152,19 +152,21 @@
             const minutes = Math.floor(countdownTime / 60000);
             const seconds = Math.floor((countdownTime % 60000) / 1000);
             const milliseconds = countdownTime % 1000;
+            
             let displayText;
-
             if (countdownTime > 60000) {
-                displayText = `${minutes}m ${seconds}s`;
+                // Format mm:ss
+                displayText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             } else {
-                displayText = `${seconds}s ${milliseconds}ms`;
+                // Format mm:ss.sss
+                displayText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${(milliseconds/10).toString().padStart(2, '0')}`;
             }
 
             document.getElementById('display').innerHTML = displayText;
 
             if (countdownTime <= 0) {
                 clearInterval(countdownInterval);
-                document.getElementById('display').innerHTML = "Zeit abgelaufen!";
+                document.getElementById('display').innerHTML = "Lauf beendet";
             } else {
                 countdownTime -= 10;
             }
