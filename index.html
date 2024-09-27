@@ -40,7 +40,7 @@
             justify-content: center;
             align-items: center;
             height: 100%;
-            font-size: 5em;
+            font-size: 20em;
             text-shadow: 8px 0px 0px rgba(255, 255, 255, 0.8); /* Shadow as per your request */
         }
         #controls {
@@ -91,6 +91,7 @@
         <button onclick="showCountdown()">Show Countdown</button>
         <button onclick="resetCountdown()">Reset Countdown</button>
         <button onclick="showBlank()">Blank</button>
+        <button id="startButton" style="display:none;" onclick="startCountdown()">Start Countdown</button>
     </div>
 
     <script>
@@ -104,6 +105,7 @@
             document.getElementById('display').style.textAlign = "left"; // Align clock to left
             document.getElementById('overlay').style.display = "block";  // Show overlay for clarity
             document.getElementById('display').innerHTML = '';
+            document.getElementById('startButton').style.display = "none";  // Hide Start Countdown button
             setInterval(() => {
                 const now = new Date();
                 const hours = now.getHours().toString().padStart(2, '0');
@@ -114,13 +116,20 @@
             }, 1000);
         }
 
-        // Function to update the countdown
+        // Function to show the countdown "1h" without starting it
         function showCountdown() {
             clearInterval(countdownInterval);
             document.getElementById('background').style.backgroundImage = "url('images/countdown.jpg')";
             document.getElementById('display').style.textAlign = "right"; // Align countdown to right
             document.getElementById('overlay').style.display = "block";  // Show overlay for clarity
-            countdownInterval = setInterval(updateCountdown, 10);
+            document.getElementById('display').innerHTML = "1h";  // Display "1h"
+            document.getElementById('startButton').style.display = "inline-block";  // Show Start Countdown button
+        }
+
+        // Function to start the countdown
+        function startCountdown() {
+            document.getElementById('startButton').style.display = "none";  // Hide Start Countdown button
+            countdownInterval = setInterval(updateCountdown, 10);  // Start the countdown
         }
 
         // Function to update the countdown display
@@ -150,7 +159,7 @@
         function resetCountdown() {
             countdownTime = 3600000; // Reset to 1 hour
             clearInterval(countdownInterval);
-            showCountdown(); // Restart the countdown
+            showCountdown(); // Display "1h" again
         }
 
         // Function to show a blank page with a plain background
@@ -159,6 +168,7 @@
             document.getElementById('background').style.backgroundImage = "url('images/plain.jpg')";
             document.getElementById('display').innerHTML = '';
             document.getElementById('overlay').style.display = "none";  // Hide overlay for blank page
+            document.getElementById('startButton').style.display = "none";  // Hide Start Countdown button
         }
 
         // Show the clock on load
