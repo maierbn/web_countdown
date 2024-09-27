@@ -37,11 +37,13 @@
         }
         #content {
             display: flex;
-            justify-content: center;
+            justify-content: flex-end; /* Align to the right */
             align-items: center;
             height: 100%;
             font-size: 20em;
             text-shadow: 8px 0px 0px rgba(255, 255, 255, 0.8); /* Text shadow */
+            padding-right: 50px; /* Distance from right border */
+            padding-top: 100px; /* Padding from top */
         }
         #controls {
             position: absolute;
@@ -73,7 +75,6 @@
         #countdown {
             text-align: right;
             padding-right: 50px;
-            padding-top: 100px;
         }
     </style>
 </head>
@@ -101,21 +102,22 @@
         let countdownInterval;
         let countdownTime = 3600000; // 1 hour in milliseconds
         let idleTimer;
+        let clockInterval;
 
         // Function to update the clock in 24-hour format
         function showClock() {
             clearInterval(countdownInterval);  // Stop the countdown if running
+            clearInterval(clockInterval);  // Stop any previous clock updates
             document.getElementById('background').style.backgroundImage = "url('images/start.jpeg')";
-            document.getElementById('display').style.textAlign = "left"; // Align clock to left
+            document.getElementById('display').style.textAlign = "right"; // Align clock to right
             document.getElementById('overlay').style.display = "block";  // Show overlay for clarity
             document.getElementById('startButton').style.display = "none";  // Hide Start Countdown button
+            document.getElementById('display').innerHTML = '';  // Clear display first
             clearTimeout(idleTimer);  // Stop any idle timers
-            updateClock();  // Update immediately
 
-            // Start updating the clock every second
-            const clockInterval = setInterval(() => {
-                updateClock();
-            }, 1000);
+            // Update the clock immediately and every second
+            updateClock();
+            clockInterval = setInterval(updateClock, 1000);
         }
 
         // Function to immediately update the clock display
@@ -131,6 +133,7 @@
         // Function to show the countdown "1h" without starting it
         function showCountdown() {
             clearInterval(countdownInterval);  // Stop the clock updates
+            clearInterval(clockInterval);  // Ensure clock is not updating
             document.getElementById('background').style.backgroundImage = "url('images/countdown.jpg')";
             document.getElementById('display').style.textAlign = "right"; // Align countdown to right
             document.getElementById('overlay').style.display = "block";  // Show overlay for clarity
@@ -177,6 +180,7 @@
         // Function to show a blank page with a plain background
         function showBlank() {
             clearInterval(countdownInterval);  // Stop the countdown if running
+            clearInterval(clockInterval);  // Stop clock update
             document.getElementById('background').style.backgroundImage = "url('images/plain.jpg')";
             document.getElementById('display').innerHTML = '';
             document.getElementById('overlay').style.display = "none";  // Hide overlay for blank page
