@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Running Event Clock and Countdown</title>
+    <title>Lauf Event Uhr und Countdown</title>
     <!-- Google Font: Nerko One -->
     <link href="https://fonts.googleapis.com/css2?family=Nerko+One&display=swap" rel="stylesheet">
     <style>
@@ -13,7 +13,7 @@
             height: 100%;
             width: 100%;
             font-family: 'Nerko One', cursive;
-            color: black;
+            color: #ffe245;
             text-align: center;
         }
         #background {
@@ -41,7 +41,7 @@
             align-items: center;
             height: 100%;
             font-size: 20em;
-            text-shadow: 8px 0px 0px rgba(255, 255, 255, 0.8); /* Shadow as per your request */
+            text-shadow: 8px 0px 0px rgba(255, 255, 255, 0.8); /* Text shadow */
         }
         #controls {
             position: absolute;
@@ -50,6 +50,8 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
         button {
             padding: 5px 10px;
@@ -71,6 +73,7 @@
         #countdown {
             text-align: right;
             padding-right: 50px;
+            padding-top: 100px;
         }
     </style>
 </head>
@@ -87,16 +90,17 @@
 
     <!-- Controls -->
     <div id="controls">
-        <button onclick="showClock()">Show Clock</button>
-        <button onclick="showCountdown()">Show Countdown</button>
-        <button onclick="resetCountdown()">Reset Countdown</button>
-        <button onclick="showBlank()">Blank</button>
-        <button id="startButton" style="display:none;" onclick="startCountdown()">Start Countdown</button>
+        <button onclick="showClock()">Uhr anzeigen</button>
+        <button onclick="showCountdown()">Countdown anzeigen</button>
+        <button id="startButton" style="display:none;" onclick="startCountdown()">Countdown starten</button>
+        <button onclick="resetCountdown()">Countdown zurücksetzen</button>
+        <button onclick="showBlank()">Leer</button>
     </div>
 
     <script>
         let countdownInterval;
         let countdownTime = 3600000; // 1 hour in milliseconds
+        let idleTimer;
 
         // Function to update the clock in 24-hour format
         function showClock() {
@@ -104,21 +108,29 @@
             document.getElementById('background').style.backgroundImage = "url('images/start.jpeg')";
             document.getElementById('display').style.textAlign = "left"; // Align clock to left
             document.getElementById('overlay').style.display = "block";  // Show overlay for clarity
-            document.getElementById('display').innerHTML = '';
             document.getElementById('startButton').style.display = "none";  // Hide Start Countdown button
-            setInterval(() => {
-                const now = new Date();
-                const hours = now.getHours().toString().padStart(2, '0');
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const seconds = now.getSeconds().toString().padStart(2, '0');
-                const timeString = `${hours}:${minutes}:${seconds}`;
-                document.getElementById('display').innerHTML = timeString;
+            clearTimeout(idleTimer);  // Stop any idle timers
+            updateClock();  // Update immediately
+
+            // Start updating the clock every second
+            const clockInterval = setInterval(() => {
+                updateClock();
             }, 1000);
+        }
+
+        // Function to immediately update the clock display
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('display').innerHTML = timeString;
         }
 
         // Function to show the countdown "1h" without starting it
         function showCountdown() {
-            clearInterval(countdownInterval);
+            clearInterval(countdownInterval);  // Stop the clock updates
             document.getElementById('background').style.backgroundImage = "url('images/countdown.jpg')";
             document.getElementById('display').style.textAlign = "right"; // Align countdown to right
             document.getElementById('overlay').style.display = "block";  // Show overlay for clarity
@@ -149,7 +161,7 @@
 
             if (countdownTime <= 0) {
                 clearInterval(countdownInterval);
-                document.getElementById('display').innerHTML = "Time's up!";
+                document.getElementById('display').innerHTML = "Zeit abgelaufen!";
             } else {
                 countdownTime -= 10;
             }
@@ -173,6 +185,22 @@
 
         // Show the clock on load
         showClock();
+
+        // Mouse movement to show and hide the buttons
+        document.addEventListener('mousemove', function () {
+            showControls();
+        });
+
+        function showControls() {
+            document.getElementById('controls').style.opacity = "1";
+            clearTimeout(idleTimer);  // Clear previous hide timeout
+            idleTimer = setTimeout(() => {
+                document.getElementById('controls').style.opacity = "0";
+            }, 10000);  // Hide controls after 10 seconds
+        }
+
+        // Initially hide the controls until the mouse moves
+        showControls();
     </script>
 
 </body>
